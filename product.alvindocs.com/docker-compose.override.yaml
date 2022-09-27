@@ -1,0 +1,42 @@
+version: '3.9'
+services:
+  # app
+  app:
+    image: php:8.0-fpm
+    volumes:
+      - ./src:/var/www/app
+      - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - LOG_LEVEL=error
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE
+      - DB_USERNAME
+      - DB_PASSWORD
+    working_dir: /var/www/app
+    networks:
+      - fe-product-network-dev
+
+  # nginx
+  nginx:
+    image: nginx:mainline
+    volumes:
+      - ./src:/var/www/app
+      - ./nginx/templates/default.template.conf:/etc/nginx/templates/default.conf.template
+    environment:
+      NGINX_PORT: 80
+      PHP_FPM_HOST: app
+      PHP_FPM_PORT: 9000
+      ROOT_FOLDER: /var/www/app/public
+    ports:
+      - "9001:80"
+    working_dir: /var/www/app
+    networks:
+      - fe-product-network-dev
+
+networks:
+  fe-product-network-dev:
+    driver: bridge

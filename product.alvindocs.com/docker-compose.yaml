@@ -1,0 +1,13 @@
+version: '3.9'
+services:
+  # app
+  app:
+    image: arisriswanto/fe-product:latest
+    restart: always
+
+  # nginx
+  nginx:
+    image: arisriswanto/nginx-product:latest
+    depends_on:
+      - app
+    restart: always
